@@ -29,8 +29,8 @@ export const footerLinks = [
     title: 'Support',
     links: [
       { label: 'How It Works', url: '/how-it-works' },
-      { label: 'Help Center', url: '/help-center' },
-      { label: 'FAQ', url: '/faq' },
+      { label: 'Help Center', url: '/contact-us' },
+      { label: 'FAQ', url: '/how-it-works?#faq' },
     ],
   },
 ];

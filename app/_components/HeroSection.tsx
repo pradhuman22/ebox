@@ -7,7 +7,7 @@ import { ArrowRightIcon } from 'lucide-react';
 const HeroSection = () => {
   return (
     <section className="relative w-full overflow-hidden">
-      <div className="relative z-10 container mx-auto w-full max-w-screen-xl px-4 py-16 md:px-16">
+      <div className="relative z-10 container mx-auto w-full max-w-screen-xl px-4 py-8 md:px-16">
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
           {/* content section */}
           <div className="flex flex-col space-y-6">
