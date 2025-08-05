@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  contact       String?
+  bio           String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+  orders   Order[]
+  events   Event[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  token     String
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  expiresAt DateTime
+
+  @@map("verifications")
+}
+
+model Category {
+  id     String  @id @default(cuid())
+  name   String
+  slug   String  @unique
+  order  Int     @unique
+  image  String?
+  events Event[]
+
+  @@map("categories")
+}
+
+model Event {
+  id          String      @id @default(cuid())
+  slug        String
+  title       String
+  description String
+  venue       String
+  capacity    String
+  schedule    DateTime
+  status      EventStatus @default(Draft)
+  images      String[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+
+  host   User?   @relation(fields: [hostId], references: [id])
+  hostId String?
+
+  orders  Order[]
+  tickets Ticket[]
+
+  @@map("events")
+}
+
+model Ticket {
+  id      String  @id @default(cuid())
+  type    String
+  price   String
+  Event   Event?  @relation(fields: [eventId], references: [id])
+  eventId String?
+
+  @@map("tickets")
+}
+
+model Order {
+  id          String @id @default(cuid())
+  stripeId    String @unique
+  totalAmount String
+  event       Event  @relation(fields: [eventId], references: [id])
+  eventId     String
+  buyer       User   @relation(fields: [buyerId], references: [id])
+  buyerId     String
+
+  @@map("orders")
+}
+
+enum EventStatus {
+  Draft
+  Published
+  Cancelled
+  Finished
+}
